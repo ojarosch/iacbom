@@ -1,0 +1,67 @@
+version: 2
+
+project_name: iacbom
+
+before:
+  hooks:
+    - go mod tidy
+
+builds:
+  - id: iacbom
+    main: ./cmd/iacbom
+    binary: iacbom
+    env:
+      - CGO_ENABLED=0
+    goos:
+      - linux
+      - darwin
+      - windows
+    goarch:
+      - amd64
+      - arm64
+    ldflags:
+      - -s -w -X github.com/ojarosch/iacbom/internal/cli.Version={{.Version}}
+
+archives:
+  - formats: [tar.gz]
+    name_template: >-
+      {{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}
+    format_overrides:
+      - goos: windows
+        formats: [zip]
+
+checksum:
+  name_template: checksums.txt
+
+snapshot:
+  version_template: "{{ incpatch .Version }}-next"
+
+changelog:
+  sort: asc
+  filters:
+    exclude:
+      - "^docs:"
+      - "^test:"
+      - "^chore:"
+
+homebrew_casks:
+  - name: iacbom
+    repository:
+      owner: ojarosch
+      name: homebrew-tap
+      token: "{{ .Env.TAP_GITHUB_TOKEN }}"
+    homepage: "https://github.com/ojarosch/iacbom"
+    description: "Bill of Materials for Terraform and OpenTofu repositories"
+    license: "Apache-2.0"
+    binaries:
+      - iacbom
+    url:
+      verified: "github.com/ojarosch/iacbom"
+    hooks:
+      post:
+        # Binary is not signed/notarized; strip quarantine so Gatekeeper
+        # doesn't kill it on first run.
+        install: |
+          if OS.mac?
+            system_command "/usr/bin/xattr", args: ["-dr", "com.apple.quarantine", "#{staged_path}/iacbom"]
+          end

@@ -1,0 +1,5 @@
+stages: [validate]
+validate:
+  stage: validate
+  script:
+    - tofu fmt -check

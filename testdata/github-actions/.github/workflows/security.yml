@@ -1,0 +1,7 @@
+jobs:
+  scan:
+    steps:
+      - uses: aquasecurity/trivy-action@0.28.0
+      - uses: bridgecrewio/checkov-action@v12
+      - uses: terraform-linters/setup-tflint@v4
+      - run: tflint --init

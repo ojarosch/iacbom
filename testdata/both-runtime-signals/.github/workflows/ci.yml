@@ -1,0 +1,4 @@
+jobs:
+  validate:
+    steps:
+      - run: tofu validate

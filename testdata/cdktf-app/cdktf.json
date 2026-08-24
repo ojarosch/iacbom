@@ -1,0 +1,11 @@
+{
+  "app": "node ./main.js",
+  "terraformProviders": [
+    "hashicorp/aws@~> 6.0",
+    "cloudflare/cloudflare@~> 5.0"
+  ],
+  "terraformModules": [
+    "terraform-aws-modules/vpc/aws@5.16.0"
+  ],
+  "context": {}
+}

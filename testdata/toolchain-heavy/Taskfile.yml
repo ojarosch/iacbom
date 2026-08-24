@@ -1,0 +1,7 @@
+tasks:
+  plan:
+    cmds:
+      - tofu plan
+  docs:
+    cmds:
+      - terraform-docs .

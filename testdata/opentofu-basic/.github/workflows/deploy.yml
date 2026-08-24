@@ -1,0 +1,5 @@
+jobs:
+  apply:
+    steps:
+      - uses: opentofu/setup-opentofu@v1
+      - run: tofu init && tofu apply -auto-approve

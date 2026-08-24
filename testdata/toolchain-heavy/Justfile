@@ -1,0 +1,8 @@
+validate:
+    terragrunt hclfmt
+policy:
+    conftest verify
+opa-check:
+    opa test policies/
+cost:
+    infracost breakdown --path .

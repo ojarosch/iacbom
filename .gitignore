@@ -1,0 +1,6 @@
+# GoReleaser build output
+/dist/
+
+# Local dev artifacts (root only!)
+/iacbom
+*.test
