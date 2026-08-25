@@ -16,7 +16,7 @@ import (
 	"github.com/ojarosch/iacbom/internal/report"
 )
 
-var Version = "0.1.0"
+var Version = "0.1.1"
 
 const usage = `iacbom — a Bill of Materials for Terraform and OpenTofu repositories
 

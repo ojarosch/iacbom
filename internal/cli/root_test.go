@@ -16,7 +16,7 @@ func run(t *testing.T, args ...string) (int, string, string) {
 
 func TestVersionFlag(t *testing.T) {
 	code, out, _ := run(t, "--version")
-	if code != 0 || !strings.Contains(out, "0.1.0") {
+	if code != 0 || !strings.Contains(out, "0.1.1") {
 		t.Errorf("code=%d out=%q", code, out)
 	}
 }
