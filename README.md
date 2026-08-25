@@ -1,5 +1,15 @@
 # iacbom
 
+> [!NOTE]
+> **macOS users:** iacbom is not signed with an Apple Developer certificate
+> and therefore not notarized. The Homebrew cask removes the quarantine flag
+> automatically, but if you download a binary manually, macOS Gatekeeper may
+> block it on first run. Unblock it with:
+>
+> ```bash
+> xattr -dr com.apple.quarantine ./iacbom
+> ```
+
 **A Bill of Materials for Terraform and OpenTofu repositories.**
 
 Traditional SBOMs describe software packages. iacbom describes the runtimes, providers, modules, automation, and supporting tools required to understand and reproduce an Infrastructure-as-Code repository.
@@ -28,6 +38,19 @@ iacbom does **not** execute Terraform/OpenTofu and does not contact cloud provid
 - which tools make up the surrounding toolchain (linters, scanners, version managers, dependency automation)
 
 It is read-only, local-first, fast, and useful without network access.
+
+## What iacbom is not
+
+iacbom does not replace:
+
+- Checkov
+- Trivy
+- tfsec
+- TFLint
+- Terraform validate
+- OpenTofu validate
+
+Those tools answer different questions. iacbom does **not** scan cloud resources for security problems, detect secrets, evaluate whether dependencies are vulnerable, or execute Terraform/OpenTofu. It inventories what a repository is made of — nothing more.
 
 ## Why does an IaC BOM matter?
 
@@ -218,6 +241,14 @@ Stable schema (`schema_version: "1"`), sorted deterministically, no timestamps. 
 
 ## Development
 
+Build from source:
+
+```bash
+git clone https://github.com/ojarosch/iacbom
+cd iacbom && go build -o iacbom ./cmd/iacbom
+./iacbom testdata   # try it on a fixture
+```
+
 ```bash
 go test ./...
 go vet ./...
@@ -225,6 +256,16 @@ go build ./cmd/iacbom
 ```
 
 Fixtures live in `testdata/`; fuzz targets exist for HCL parsing, module URL classification, and command matching.
+
+Releases are cut by pushing a `v*` tag; [.goreleaser.yaml](.goreleaser.yaml)
+builds all platforms, publishes the GitHub Release, and updates the
+[ojarosch/homebrew-tap](https://github.com/ojarosch/homebrew-tap) cask. The
+workflow needs a `TAP_GITHUB_TOKEN` secret (a fine-grained PAT with push access
+to the tap repository). Test releases locally with:
+
+```bash
+goreleaser release --snapshot --clean --skip=publish
+```
 
 ## License
 

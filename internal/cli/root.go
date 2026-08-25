@@ -57,7 +57,7 @@ func Main(args []string, stdout, stderr io.Writer) int {
 		return 2
 	}
 	if *showVersion {
-		fmt.Fprintln(stdout, Version)
+		fmt.Fprintf(stdout, "iacbom %s\n", Version)
 		return 0
 	}
 
