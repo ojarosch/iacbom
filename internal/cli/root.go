@@ -51,13 +51,13 @@ func Main(args []string, stdout, stderr io.Writer) int {
 	verbose := fs.Bool("verbose", false, "include evidence")
 	doEnrich := fs.Bool("enrich", false, "query public registries for latest versions (network)")
 	showVersion := fs.Bool("version", false, "print version")
-	fs.Usage = func() { fmt.Fprint(stderr, usage) }
+	fs.Usage = func() { _, _ = fmt.Fprint(stderr, usage) }
 
 	if err := fs.Parse(args); err != nil {
 		return 2
 	}
 	if *showVersion {
-		fmt.Fprintf(stdout, "iacbom %s\n", Version)
+		_, _ = fmt.Fprintf(stdout, "iacbom %s\n", Version)
 		return 0
 	}
 
@@ -67,7 +67,7 @@ func Main(args []string, stdout, stderr io.Writer) int {
 	if len(rest) > 0 && rest[0] == "diff" {
 		rest = rest[1:]
 		if len(rest) != 2 {
-			fmt.Fprintln(stderr, "error: diff expects exactly two arguments: <old.json> <new.json>")
+			_, _ = fmt.Fprintln(stderr, "error: diff expects exactly two arguments: <old.json> <new.json>")
 			return 2
 		}
 		return runDiff(rest, stdout, stderr)
@@ -84,24 +84,24 @@ func Main(args []string, stdout, stderr io.Writer) int {
 	case len(rest) == 1:
 		path = rest[0]
 	default:
-		fmt.Fprintln(stderr, "error: expected at most one path argument")
+		_, _ = fmt.Fprintln(stderr, "error: expected at most one path argument")
 		return 2
 	}
 
 	info, err := os.Stat(path)
 	if err != nil {
-		fmt.Fprintf(stderr, "error: %v\n", err)
+		_, _ = fmt.Fprintf(stderr, "error: %v\n", err)
 		return 2
 	}
 	if !info.IsDir() {
-		fmt.Fprintf(stderr, "error: %s is not a directory\n", path)
+		_, _ = fmt.Fprintf(stderr, "error: %s is not a directory\n", path)
 		return 2
 	}
 
 	b, err := assemble.Assemble(path)
 	b.Repository.Path = filepath.ToSlash(filepath.Clean(path))
 	if err != nil {
-		fmt.Fprintf(stderr, "error: %v\n", err)
+		_, _ = fmt.Fprintf(stderr, "error: %v\n", err)
 		return 2
 	}
 
@@ -126,28 +126,28 @@ func Main(args []string, stdout, stderr io.Writer) int {
 			filterSubset(b, subset)
 		}
 		if err := report.JSON(stdout, b); err != nil {
-			fmt.Fprintf(stderr, "error: %v\n", err)
+			_, _ = fmt.Fprintf(stderr, "error: %v\n", err)
 			return 2
 		}
 	case "cyclonedx-json":
 		if err := report.CycloneDXJSON(stdout, b); err != nil {
-			fmt.Fprintf(stderr, "error: %v\n", err)
+			_, _ = fmt.Fprintf(stderr, "error: %v\n", err)
 			return 2
 		}
 	case "spdx-json":
 		if err := report.SPDXJSON(stdout, b); err != nil {
-			fmt.Fprintf(stderr, "error: %v\n", err)
+			_, _ = fmt.Fprintf(stderr, "error: %v\n", err)
 			return 2
 		}
 	default:
-		fmt.Fprintf(stderr, "error: unknown format %q (supported: text, json, cyclonedx-json, spdx-json)\n", *format)
+		_, _ = fmt.Fprintf(stderr, "error: unknown format %q (supported: text, json, cyclonedx-json, spdx-json)\n", *format)
 		return 2
 	}
 
 	// Text mode renders warnings inline; other formats report them on stderr.
 	if *format != "text" {
 		for _, d := range b.Diagnostics {
-			fmt.Fprintf(stderr, "WARN: %s: %s\n", d.File, d.Message)
+			_, _ = fmt.Fprintf(stderr, "WARN: %s: %s\n", d.File, d.Message)
 		}
 	}
 
@@ -178,19 +178,19 @@ func runDiff(paths []string, stdout, stderr io.Writer) int {
 			return nil, fmt.Errorf("%s is not a valid iacbom JSON document: %w", p, err)
 		}
 		if b.SchemaVersion != "" && b.SchemaVersion != bom.SchemaVersion {
-			fmt.Fprintf(stderr, "WARN: %s has schema version %q, expected %q; diff may be inaccurate\n",
+			_, _ = fmt.Fprintf(stderr, "WARN: %s has schema version %q, expected %q; diff may be inaccurate\n",
 				p, b.SchemaVersion, bom.SchemaVersion)
 		}
 		return &b, nil
 	}
 	oldB, err := load(paths[0])
 	if err != nil {
-		fmt.Fprintf(stderr, "error: %v\n", err)
+		_, _ = fmt.Fprintf(stderr, "error: %v\n", err)
 		return 2
 	}
 	newB, err := load(paths[1])
 	if err != nil {
-		fmt.Fprintf(stderr, "error: %v\n", err)
+		_, _ = fmt.Fprintf(stderr, "error: %v\n", err)
 		return 2
 	}
 	if report.Diff(stdout, oldB, newB) {

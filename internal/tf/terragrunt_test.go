@@ -62,8 +62,10 @@ func FuzzParseTerragrunt(f *testing.F) {
 	f.Fuzz(func(t *testing.T, content string) {
 		dir := t.TempDir()
 		path := dir + "/terragrunt.hcl"
-		_ = writeFile(path, content)
-		ParseTerragrunt(path) // must not panic
+		if err := writeFile(path, content); err != nil {
+			t.Fatal(err)
+		}
+		_, _ = ParseTerragrunt(path) // must not panic
 	})
 }
 

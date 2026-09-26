@@ -10,7 +10,7 @@ import (
 
 // Diff renders changes between two BOMs and reports whether anything changed.
 func Diff(w io.Writer, oldB, newB *bom.BOM) bool {
-	fmt.Fprintf(w, "iacbom diff %s -> %s\n", displayPath(oldB.Repository.Path), displayPath(newB.Repository.Path))
+	_, _ = fmt.Fprintf(w, "iacbom diff %s -> %s\n", displayPath(oldB.Repository.Path), displayPath(newB.Repository.Path))
 	changed := false
 
 	changed = renderDiff(w, "Runtime", diffEntities(
@@ -91,17 +91,17 @@ func renderDiff(w io.Writer, name string, d entityDiff) bool {
 	}
 	section(w, name)
 	for _, key := range d.added {
-		fmt.Fprintf(w, "  + %s\n", key)
+		_, _ = fmt.Fprintf(w, "  + %s\n", key)
 	}
 	for _, key := range d.removed {
-		fmt.Fprintf(w, "  - %s\n", key)
+		_, _ = fmt.Fprintf(w, "  - %s\n", key)
 	}
 	for _, key := range sortedKeysGeneric(d.changes) {
-		fmt.Fprintf(w, "  ~ %s\n", key)
+		_, _ = fmt.Fprintf(w, "  ~ %s\n", key)
 		fields := sortedKeysGeneric(d.changes[key])
 		for _, f := range fields {
 			delta := d.changes[key][f]
-			fmt.Fprintf(w, "      %-11s %s -> %s\n", f+":", delta[0], delta[1])
+			_, _ = fmt.Fprintf(w, "      %-11s %s -> %s\n", f+":", delta[0], delta[1])
 		}
 	}
 	return true

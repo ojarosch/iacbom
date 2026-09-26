@@ -171,7 +171,7 @@ func getJSON(ctx context.Context, client *http.Client, url string, v interface{}
 	if err != nil {
 		return err
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 	if resp.StatusCode != http.StatusOK {
 		return fmt.Errorf("registry returned HTTP %d", resp.StatusCode)
 	}

@@ -3,9 +3,7 @@
 // dependency automation. Detection is data-driven via the Catalog.
 package tooling
 
-import (
-	"strings"
-)
+import "strings"
 
 type Category string
 
@@ -56,15 +54,6 @@ var Catalog = []ToolDefinition{
 	{Name: "Renovate", ConfigFiles: []string{"renovate.json", "renovate.json5"}, Category: CatAutomation},
 	{Name: "Dependabot", ConfigFiles: []string{".github/dependabot.yml"}, Category: CatAutomation},
 	{Name: "CDKTF", ConfigFiles: []string{"cdktf.json"}, Category: CatOrchestration},
-}
-
-func byName(name string) *ToolDefinition {
-	for i := range Catalog {
-		if strings.EqualFold(Catalog[i].Name, name) {
-			return &Catalog[i]
-		}
-	}
-	return nil
 }
 
 // iacActionHints identifies IaC-related GitHub Actions by substring match on
